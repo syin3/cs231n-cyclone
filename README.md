@@ -3,6 +3,18 @@
 This project estimates intensity and size of tropical cyclones from more than 70k frames collected worldwide.<br>
 Data is available at [this webpage](https://www.csie.ntu.edu.tw/~htlin/program/TCIR/).
 
+
+## Requirements
+
+Dependency can be installed using the following command:
+```bash
+pip install -r requirements.txt
+```
+
+## Proposed model
+
+## Model Training
+
 ## Citation
 
 If you find this repository, e.g., the code and the datasets, useful in your research, please cite the following paper:
