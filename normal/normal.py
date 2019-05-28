@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 import copy
 import time
+import os
 
 import torch
 import torch.nn as nn
@@ -34,20 +35,22 @@ data_transform = transforms.Compose([
 ])
 datasets = {x: resnetTCData('{}.npy'.format(x), '{}Info.npy'.format(x), data_transform) 
             for x in ['train', 'val']}
-dataloaders = {x: DataLoader(datasets[x], batch_size=32, shuffle=True, num_workers=4)
+dataloaders = {x: DataLoader(datasets[x], batch_size=128, shuffle=True, num_workers=4)
                for x in ['train', 'val']}
 dataset_sizes = {x: len(datasets[x]) for x in ['train', 'val']}
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 criterion = nn.CrossEntropyLoss()
 
 # training function
-def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
+def train_model(model, criterion, optimizer, scheduler, num_epochs, folder):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
     training_acc = []
+    training_loss = []
     val_acc = []
+    val_loss = []
 
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
@@ -93,8 +96,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
             if phase == 'train':
                 training_acc.append(epoch_acc)
+                training_loss.append(epoch_loss)
             else:
                 val_acc.append(epoch_acc)
+                val_loss.append(epoch_loss)
 
             print('{} Loss: {:.4f} Acc: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
@@ -107,6 +112,17 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
         print()
 
+        # save checkpoint, see these two webpages
+        # https://pytorch.org/tutorials/beginner/saving_loading_models.html
+        # https://discuss.pytorch.org/t/saving-and-loading-a-model-in-pytorch/2610/3
+        if epoch % 20 == 0:
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'scheduler_state_dict': scheduler.state_dict()
+                }, './results/{}/{}'.format(folder, epoch))
+
     time_elapsed = time.time() - since
     print('Training complete in {:.0f}m {:.0f}s'.format(
         time_elapsed // 60, time_elapsed % 60))
@@ -114,10 +130,25 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
     # load best model weights
     model.load_state_dict(best_model_wts)
-    return model, training_acc, val_acc
+    return model, training_acc, val_acc, training_loss, val_loss
 
-# choose model based on user input
-modelSize = input("Enter the number of layers you want in the Resnet model: 18, 34, 50, 101, 152?\n")
+# choose model and training epochs based on user input
+modelSize = input("Enter the number of layers you want in the Resnet model:\n Choose one from: 18, 34, 50, 101, 152\n")
+epochTrain = input("Enter the number of epochs to train:\n I usually do 50 or 100\n")
+
+# create directory for the specified model and facilitates later output
+dirName = "./results/resnet_{}_{}".format(modelSize, epochTrain)
+try:
+    # Create target Directory
+    os.mkdir(dirName)
+    print("Directory " , dirName ,  " Created ") 
+except FileExistsError:
+    print("Directory " , dirName ,  " already exists")
+
+
+print("Note, your trained model will be saved at this location:\n ./results/resnet_{}_{}/model".format(modelSize, epochTrain))
+
+# training with specified hyper-parameter
 labels = ['no', 'td', 'ts', 'one', 'two', 'three', 'four', 'five']
 models = {
     '18': resnet18,
@@ -133,18 +164,43 @@ optimizer = optim.Adam(resnetTC.parameters(), lr=0.001, weight_decay=0.001)
 # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', 
 #                                                  patience = 5, threshold = 0.01, 
 #                                                  factor = 1/3, threshold_mode  = 'rel')
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.33)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.33)
 
-# learn and save plot
-_, train_acc, val_acc = train_model(resnetTC, criterion, optimizer, scheduler, num_epochs=50)
+# learn
+learned_model, train_acc, val_acc, training_loss, val_loss = train_model(resnetTC, criterion, optimizer, scheduler, \
+    num_epochs=int(epochTrain), folder="resnet_{}_{}".format(modelSize, epochTrain))
+
+# save model
+torch.save(learned_model.state_dict(), "./results/resnet_{}_{}/model".format(modelSize, epochTrain))
+
+# save training and validation accuracies and losses
+with open("/results/resnet_{}_{}/train_acc.txt".format(modelSize, epochTrain), "w+") as file:
+    file.write(str(train_acc))
+with open("/results/resnet_{}_{}/train_loss.txt".format(modelSize, epochTrain), "w+") as file:
+    file.write(str(train_loss))
+with open("/results/resnet_{}_{}/val_acc.txt".format(modelSize, epochTrain), "w+") as file:
+    file.write(str(val_acc))
+with open("/results/resnet_{}_{}/val_loss.txt".format(modelSize, epochTrain), "w+") as file:
+    file.write(str(val_loss))
+
+# to load saved models, please follow this page:
+# https://pytorch.org/tutorials/beginner/saving_loading_models.html
+# https://discuss.pytorch.org/t/saving-and-loading-a-model-in-pytorch/2610/3
+
+# to load accuracies and losses from files, please refer to this webpage
+# https://stackoverflow.com/questions/27745500/how-to-save-a-list-to-a-file-and-read-it-as-a-list-type
+# with open("test.txt", "r") as file:
+#     data2 = eval(file.readline())
+
 
 # monitor CPU usage
 # top -F -R -o cpu
 
 plt.plot(train_acc, label = 'train')
 plt.plot(val_acc, label = 'val')
-plt.xlabel(r'Epochs')
-plt.ylabel(r'Training Acc')
+plt.xlabel(r"Epochs")
+plt.ylabel(r"Training Acc")
 plt.legend()
-plt.savefig('train acc')
+plt.savefig("/results/resnet_{}_{}/acc".format(modelSize, epochTrain))
 plt.close()
+
