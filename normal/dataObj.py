@@ -39,8 +39,7 @@ class resnetTCData(data.Dataset):
         
         datMatrix = np.nan_to_num(datMatrix)
         datMatrix[datMatrix > 1000] = 0
-#         print(index)
-        # print(datMatrix.shape)
+        
         if self.transform:
             datMatrix = self.transform(datMatrix)
         

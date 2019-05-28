@@ -35,7 +35,7 @@ data_transform = transforms.Compose([
 ])
 datasets = {x: resnetTCData('{}.npy'.format(x), '{}Info.npy'.format(x), data_transform) 
             for x in ['train', 'val']}
-dataloaders = {x: DataLoader(datasets[x], batch_size=128, shuffle=True, num_workers=4)
+dataloaders = {x: DataLoader(datasets[x], batch_size=256, shuffle=True, num_workers=8)
                for x in ['train', 'val']}
 dataset_sizes = {x: len(datasets[x]) for x in ['train', 'val']}
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -164,7 +164,7 @@ optimizer = optim.Adam(resnetTC.parameters(), lr=0.001, weight_decay=0.001)
 # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', 
 #                                                  patience = 5, threshold = 0.01, 
 #                                                  factor = 1/3, threshold_mode  = 'rel')
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.33)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.33)
 
 # learn
 learned_model, train_acc, val_acc, training_loss, val_loss = train_model(resnetTC, criterion, optimizer, scheduler, \
