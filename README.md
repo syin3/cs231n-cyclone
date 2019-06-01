@@ -47,6 +47,13 @@ A use case is to train a Resnet34, for 100 epochs, with batch size 256, regulari
 python train.py --modelSize 34 --epochTrain 100 --batchSize 256 --regStrength 3e-3 --lr 2e-3 --scheduler step
 ```
 
+#### 2.4 Results saving
+The previous commandline arguments will create a folder **./results/resnet_34_100_0.003_0.002_step_False**. 6 files exist in that folder. To download the folder to a local folder **results**, type the following in the Terminal:
+
+```
+gcloud compute scp --recurse your/cloud/server/directory/results/resnet_34_100_0.003_0.002_step_False your/local/directory/results
+```
+
 ## Citation
 
 If you find this repository, e.g., the code and the datasets, useful in your research, please cite the following paper:
