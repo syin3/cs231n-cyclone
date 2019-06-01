@@ -48,7 +48,7 @@ python train.py --modelSize 34 --epochTrain 100 --batchSize 256 --regStrength 3e
 ```
 
 #### 2.4 Results saving
-The previous commandline arguments will create a folder **./results/resnet_34_100_0.003_0.002_step_False**. 6 files exist in that folder. To download the folder to a local folder **results**, type the following in the Terminal:
+The previous commandline arguments will create a folder **./results/resnet_34_100_0.003_0.002_step_False**. 7 files exist in that folder. To download the folder to a local folder **results**, type the following in the Terminal:
 
 ```
 gcloud compute scp --recurse your/cloud/server/directory/results/resnet_34_100_0.003_0.002_step_False your/local/directory/results
