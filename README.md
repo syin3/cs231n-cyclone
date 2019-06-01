@@ -27,16 +27,20 @@ Data has not been provided for this case, because they take up 60GB on disk. You
 
 Therefore, to perform training on a specified model, you have to do these commands (assume you have fulfilled all dependency requirements):
 
+#### Create folders
+You need to have two folders in ./normal/. That is **./normal/data** and **./normal/results**.
+
+#### Generate training and validation data
 ```
-1. Create a subfolder /data/ in /normal/, so there is a folder named /normal/data/
-2. **Generate data**: python generate.py
-3. You should by now have 7 files in /normal/ and one subfolder /normal/data/.
-4. Run training: python train.py. 
-5. Currently, we only accept training on resnet. Please type the number of resnet as prompted in terminal, e.g. 18, 34, 50, 101.
-6. We are trying to finish up model saving tasks.
+python generate.py
 ```
 
-A typical use case of
+#### Train
+
+A use case is to train a Resnet34, for 100 epochs, with batch size 256, regularization strength 3e-3, initial learning rate 2e-3, step linear scheduler for learning rate decay and no center crop on images.
+```
+python train.py --modelSize 34 --epochTrain 100 --batchSize 256 --regStrength 3e-3 --lr 2e-3 --scheduler step --centerCrop False
+```
 
 ## Citation
 
