@@ -44,7 +44,7 @@ gcloud compute scp --recurse local/folder cloud/folder
 
 A use case is to train a Resnet34, for 100 epochs, with batch size 256, regularization strength 3e-3, initial learning rate 2e-3, step linear scheduler for learning rate decay and no center crop on images.
 ```
-python train.py --modelSize 34 --epochTrain 100 --batchSize 256 --regStrength 3e-3 --lr 2e-3 --scheduler step --centerCrop False
+python train.py --modelSize 34 --epochTrain 100 --batchSize 256 --regStrength 3e-3 --lr 2e-3 --scheduler step
 ```
 
 ## Citation
