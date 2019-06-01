@@ -31,10 +31,12 @@ Therefore, to perform training on a specified model, you have to do these comman
 1. Create a subfolder /data/ in /normal/, so there is a folder named /normal/data/
 2. Generate data: python generate.py
 3. You should by now have 7 files in /normal/ and one subfolder /normal/data/.
-4. Run training: python normal.py. 
+4. Run training: python train.py. 
 5. Currently, we only accept training on resnet. Please type the number of resnet as prompted in terminal, e.g. 18, 34, 50, 101.
 6. We are trying to finish up model saving tasks.
 ```
+
+A typical use case of
 
 ## Citation
 
