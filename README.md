@@ -15,27 +15,32 @@ pip install -r requirements.txt
 
 ## Model Training
 
-### Overfit case
+### 1. Overfit case
 Training and validation data in the overfitting case has been prepared for you. Please go to the **maxOverfit.ipynb** file and preform interactive training there.
 
 Notice don't run two sections in the Jupyter Notebook unless you want to re-generate the training and validation data: **Read in info and get maxes**, **Calculate mean and std in training**.
 
 Another reminder is that the last two sections **Playground** and **Calculate channel... in rolling manner** is also for pre-processing and playing with data. They are relevenat in the training.
 
-### Normal case
+### 2. Normal case
 Data has not been provided for this case, because they take up 60GB on disk. You need to generate the data by yourself.
 
 Therefore, to perform training on a specified model, you have to do these commands (assume you have fulfilled all dependency requirements):
 
-#### Create folders
+#### 2.1 Create folders
 You need to have two folders in ./normal/. That is **./normal/data** and **./normal/results**.
 
-#### Generate training and validation data
+#### 2.2 Generate training and validation data
 ```
 python generate.py
 ```
 
-#### Train
+Also, you can upload data files generated locally to cloud server
+
+```
+gcloud compute scp --recurse local/folder cloud/folder
+```
+#### 2.3 Train
 
 A use case is to train a Resnet34, for 100 epochs, with batch size 256, regularization strength 3e-3, initial learning rate 2e-3, step linear scheduler for learning rate decay and no center crop on images.
 ```
