@@ -191,12 +191,22 @@ def main(args):
     # save model
     torch.save(learned_model.state_dict(), "{}/model".format(dirName))
 
+    plt.figure(1)
     plt.plot(train_acc, label = 'train')
     plt.plot(val_acc, label = 'val')
     plt.xlabel(r"Epochs")
     plt.ylabel(r"Accuracy")
     plt.legend()
     plt.savefig("{}/acc".format(dirName))
+    plt.close()
+
+    plt.figure(2)
+    plt.plot(train_loss, label = 'train')
+    plt.plot(val_loss, label = 'val')
+    plt.xlabel(r"Epochs")
+    plt.ylabel(r"Loss")
+    plt.legend()
+    plt.savefig("{}/loss".format(dirName))
     plt.close()
 
 if __name__ == '__main__':
