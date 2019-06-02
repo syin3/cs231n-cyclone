@@ -116,13 +116,13 @@ def train_model(model, device, criterion, optimizer, scheduler, dataset_sizes, d
         # save checkpoint, see these two webpages
         # https://pytorch.org/tutorials/beginner/saving_loading_models.html
         # https://discuss.pytorch.org/t/saving-and-loading-a-model-in-pytorch/2610/3
-        # if epoch % 20 == 0:
-        #     torch.save({
-        #         'epoch': epoch,
-        #         'model_state_dict': model.state_dict(),
-        #         'optimizer_state_dict': optimizer.state_dict(),
-        #         'scheduler_state_dict': scheduler.state_dict()
-        #         }, './results/{}/{}'.format(folder, epoch))
+        if epoch % 20 == 0:
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'scheduler_state_dict': scheduler.state_dict()
+                }, './results/{}/{}'.format(folder, epoch))
 
     time_elapsed = time.time() - since
     print('Training complete in {:.0f}m {:.0f}s'.format(
