@@ -122,7 +122,7 @@ def train_model(model, device, criterion, optimizer, scheduler, dataset_sizes, d
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'scheduler_state_dict': scheduler.state_dict()
-                }, './results/{}/{}'.format(folder, epoch))
+                }, '{}/{}'.format(folder, epoch))
 
     time_elapsed = time.time() - since
     print('Training complete in {:.0f}m {:.0f}s'.format(
